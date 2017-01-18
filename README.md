@@ -19,5 +19,4 @@ License and credits
 This core has been developed by José Cruz from [botnroll.com](http://wwww.botnroll.com)
 ```
   Copyright © SAR - Soluções de Automação e Robótica, Lda. 2016
-  
 ```
