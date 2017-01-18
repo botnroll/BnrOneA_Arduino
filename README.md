@@ -16,7 +16,7 @@ Before posting a new issue, please check if the same problem has been already re
 
 License and credits
 
-This core has been developed by José Cruz from botnroll.com
+This core has been developed by José Cruz from [botnroll.com](http://wwww.botnroll.com)
 ```
   Copyright (c) 2015 Arduino LLC.  All right reserved.
 
