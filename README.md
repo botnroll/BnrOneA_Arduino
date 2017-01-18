@@ -1,7 +1,7 @@
 # BnrOneA_Arduino
 Arduino library for Botnroll One A
 
-This repository contains the source code for the library in Arduino for the robot BnrOneA.
+This repository contains the source code for the library used on Botnroll One A robot (BnrOneA).
 
 Installation on Arduino IDE
 
