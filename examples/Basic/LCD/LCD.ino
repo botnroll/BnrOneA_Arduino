@@ -10,6 +10,7 @@ Prints a message on the robot LCD.
 */
 
 #include <BnrOneA.h>   // Bot'n Roll ONE A library
+#include <EEPROM.h>    // EEPROM reading and writing
 #include <SPI.h>       // SPI communication library required by BnrOne.cpp
 BnrOneA one;           // declaration of object variable to control the Bot'n Roll ONE A
 

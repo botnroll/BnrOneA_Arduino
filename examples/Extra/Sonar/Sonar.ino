@@ -2,13 +2,13 @@
  HC-SR04 Ping distance sensor:
  VCC to arduino 5v 
  GND to arduino GND
- Echo to Arduino pin 7 
- Trig to Arduino pin 8
+ Echo to Arduino pin 6 
+ Trig to Arduino pin 7
  
  This sketch originates from Virtualmix: http://goo.gl/kJ8Gl
 
  This example was created by José Cruz (www.botnroll.com)
- on 28 November 2013
+ on 25 February 2017
  
  This code example is in the public domain. 
  http://www.botnroll.com
@@ -16,12 +16,13 @@
  
 #include <SPI.h>                   // required by BnrOne.cpp
 #include <BnrOneA.h>
+#include <EEPROM.h>    // EEPROM reading and writing
 
 //constants definitions
 #define SSPIN  2    //Slave Select (SS) pin for SPI communication
 
-#define echoPin 7 // Echo Pin
-#define trigPin 8 // Trigger Pin
+#define echoPin 6 // Echo Pin
+#define trigPin 7 // Trigger Pin
 #define LEDPin 13 // Onboard LED
 
 BnrOneA one;         //declaration of object variable to control the Bot'n Roll ONE

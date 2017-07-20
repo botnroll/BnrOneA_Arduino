@@ -1,13 +1,13 @@
 /*
   BnrOneA.cpp - Library for interfacing with Bot'n Roll ONE Arduino Compatible from www.botnroll.com
   Created by José Cruz, November 28, 2013.
-  Updated December 19, 2014.
+  Updated August 24, 2016.
   Released into the public domain.
 */
 
 #include "SPI.h"
 #include "BnrOneA.h"
-
+#include "EEPROM.h"
 ///////////////////////////////////////////////////////////////////////
 //setup routines
 ///////////////////////////////////////////////////////////////////////
@@ -88,6 +88,15 @@ void BnrOneA::move(int speedL,int speedR)
     spiSendData(COMMAND_MOVE,buffer,sizeof(buffer));
     delay(5);//Wait while command is processed
 }
+void BnrOneA::move1m(byte motor,int speed)
+{
+    byte speed_H=highByte(speed);
+    byte speed_L=lowByte(speed);
+
+    byte buffer[]={KEY1,KEY2,motor,speed_H,speed_L};
+    spiSendData(COMMAND_MOVE_1M,buffer,sizeof(buffer));
+    delay(5);//Wait while command is processed
+}
 void BnrOneA::movePID(int speedL,int speedR)
 {
     byte speedL_H=highByte(speedL);
@@ -112,16 +121,35 @@ void BnrOneA::setPID(int kp, int ki, int kd)
     spiSendData(COMMAND_PID_CFG,buffer,sizeof(buffer));
     delay(20);//Wait while command is processed
 }
+
 void BnrOneA::stop()
 {
     byte buffer[]={KEY1,KEY2};
     spiSendData(COMMAND_STOP,buffer,sizeof(buffer));
     delay(5);//Wait while command is processed
 }
+void BnrOneA::stop1m(byte motor)
+{
+    byte buffer[]={KEY1,KEY2,motor};
+    spiSendData(COMMAND_STOP_1M,buffer,sizeof(buffer));
+    delay(5);//Wait while command is processed
+}
 void BnrOneA::brake(byte torqueL,byte torqueR)
 {
     byte buffer[]={KEY1,KEY2,torqueL,torqueR};
     spiSendData(COMMAND_BRAKE,buffer,sizeof(buffer));
+    delay(5);//Wait while command is processed
+}
+void BnrOneA::brake1m(byte motor,byte torque)
+{
+    byte buffer[]={KEY1,KEY2,motor,torque};
+    spiSendData(COMMAND_BRAKE_1M,buffer,sizeof(buffer));
+    delay(5);//Wait while command is processed
+}
+void BnrOneA::brake1m(byte motor)
+{
+    byte buffer[]={KEY1,KEY2,motor,BRAKE_TORQUE};
+    spiSendData(COMMAND_BRAKE_1M,buffer,sizeof(buffer));
     delay(5);//Wait while command is processed
 }
 void BnrOneA::resetEncL()
@@ -228,7 +256,8 @@ int BnrOneA::readEncRInc()
 {
     return spiRequestWord(COMMAND_ENCR_INC);
 }
-/*
+
+
 void BnrOneA::readFirmware(byte *firm1,byte *firm2,byte *firm3)
 {
     byte value[3]={0,0,0};
@@ -247,7 +276,7 @@ void BnrOneA::readFirmware(byte *firm1,byte *firm2,byte *firm3)
     *firm3=value[2];
     digitalWrite(_sspin, HIGH); // Close communication with slave device.
 }
- */
+ 
 byte BnrOneA::obstacleSensors()
 {
     return spiRequestByte(COMMAND_OBSTACLES);
@@ -591,12 +620,32 @@ void BnrOneA::lcd1(const char string[],double number)
 		if((i+a)<18)
 			buffer[i+a]=string2[i];
     }
-	for(i=0;i<18;i++){
-		Serial.println(buffer[i],DEC);
-	}
-	Serial.println();
     spiSendData(COMMAND_LCD_L1,buffer,sizeof(buffer));
     delay(19);//Wait while command is processed
+}
+void BnrOneA::lcd1(unsigned char stringA[8],unsigned char stringB[8])
+{
+    int i,a;
+    byte buffer[19];
+    char string1[17],string2[17];
+    for(i=0;i<16;i++){
+        if (i<8)
+        string2[i]=stringA[i];
+        else
+        string2[i]=stringB[i-8];
+    }
+    string2[16]=0;
+    a=sprintf(string1,string2);
+    buffer[0]=KEY1;
+    buffer[1]=KEY2;
+    for(i=0;i<a;i++){
+        buffer[i+2]=string1[i];
+    }
+    for(i=a;i<16;i++){
+        buffer[i+2]=' ';
+    }
+    spiSendData(COMMAND_LCD_L1,buffer,sizeof(buffer));
+    delay(12);//Wait while command is processed
 }
 void BnrOneA::lcd1(unsigned int num1, unsigned int num2)
 {
@@ -940,6 +989,30 @@ void BnrOneA::lcd2(const char string[],double number)
     spiSendData(COMMAND_LCD_L2,buffer,sizeof(buffer));
     delay(19);//Wait while command is processed
 }
+void BnrOneA::lcd2(unsigned char stringA[] ,unsigned char stringB[])
+{
+    int i,a;
+    byte buffer[19];
+    char string1[17],string2[17];
+    for(i=0;i<16;i++){
+        if (i<8)
+        string2[i]=stringA[i];
+        else
+        string2[i]=stringB[i-8];
+    }
+    string2[16]=0;
+    a=sprintf(string1,string2);
+    buffer[0]=KEY1;
+    buffer[1]=KEY2;
+    for(i=0;i<a;i++){
+        buffer[i+2]=string1[i];
+    }
+    for(i=a;i<16;i++){
+        buffer[i+2]=' ';
+    }
+    spiSendData(COMMAND_LCD_L2,buffer,sizeof(buffer));
+    delay(12);//Wait while command is processed
+}
 void BnrOneA::lcd2(unsigned int num1, unsigned int num2)
 {
     int i, a=0;
@@ -1041,4 +1114,115 @@ void BnrOneA::lcd2(int num1, int num2, int num3, int num4)
     }
     spiSendData(COMMAND_LCD_L2,buffer,sizeof(buffer));
     delay(19);//Wait while command is processed
+}
+
+/***********************************************************************************************/
+
+
+int BnrOneA::readLine()
+{	
+	  #define VMAX 1000
+	  static int SValMax[8]={1023,1023,1023,1023,1023,1023,1023,1023};
+	  static int SValMin[8]={0,0,0,0,0,0,0,0};
+	  static double SFact[8];
+	  static int Vtrans=50;  //
+	  static bool loadFlag=0;
+
+	  int Vrt1=SValMin[1]*2, Vrt2=SValMin[6]*2;
+      int SValR[8];  
+      int SValN[10]={Vrt1,0,0,0,0,0,0,0,0,Vrt2};    
+      int idMax=-1, SMax=-1;
+      int lineValue=-1;
+      int flag=-1;
+      static int prevLineValue=0;
+
+	  if(loadFlag==0)
+	  {
+		   //Ler valores da EEPROM
+		   byte eepromADD=100;
+		   for(int i=0;i<8;i++)
+		   {
+			   SValMax[i]=(int)EEPROM.read(eepromADD);
+			   SValMax[i]=SValMax[i]<<8;
+			   eepromADD++;
+			   SValMax[i]+=(int)EEPROM.read(eepromADD);
+			   eepromADD++;
+		   }
+		   for(int i=0;i<8;i++)
+		   {
+			   SValMin[i]=(int)EEPROM.read(eepromADD);
+			   SValMin[i]=SValMin[i]<<8;
+			   eepromADD++;
+			   SValMin[i]+=(int)EEPROM.read(eepromADD);
+			   eepromADD++;
+		   }   
+		   Vtrans=(int)EEPROM.read(eepromADD);
+		   Vtrans=Vtrans<<8;
+		   eepromADD++;
+		   Vtrans+=(int)EEPROM.read(eepromADD);
+		   
+		   for(int i=0;i<8;i++)
+		   {
+			  SFact[i]=(double)VMAX/(double)(SValMax[i]-SValMin[i]); //Calcular fator de cada sensor
+		   }
+		   loadFlag=1;
+	  }
+
+      //Leitura dos valores dos 8 sensores
+      for(int i=0;i<8;i++)
+      {
+          SValR[i]=readAdc(i);
+      }
+
+      //Normalizar valores entre 0 e 1000
+      for(int i=1;i<9;i++)
+      {
+          SValN[i]=(int)((double)((SValR[i-1]-SValMin[i-1]))*SFact[i-1]); //Registar o valor efetivo máximo de cada sensor
+          if(SValN[i]>SMax)
+            {
+              SMax=SValN[i]; //Identificar o sensor com valor efectivo máximo
+              idMax=i;      //Registar o indice do sensor
+            }
+      }
+      
+      if(SMax>Vtrans && SValN[idMax-1]>=SValN[idMax+1]) //Se o anterior for maior que o seguinte
+      {
+          lineValue=VMAX*(idMax-1)+SValN[idMax];     
+             flag=0;
+      }
+      else if(SMax>Vtrans && SValN[idMax-1]<SValN[idMax+1]) //Se o anterior for menor que o seguinte
+      {
+          if(idMax!=8) // Se não é o último sensor
+          {
+             lineValue=VMAX*idMax+SValN[idMax+1];
+             flag=1;
+          }
+          else //Se é o último sensor
+          {
+             lineValue=VMAX*idMax+VMAX-SValN[idMax];
+             flag=2;
+          }
+      }
+
+      if(lineValue==-1)//saíu da linha -> tudo branco
+      {
+        if(prevLineValue>4500)
+        {
+          lineValue=9000;
+        }
+        else
+        {
+          lineValue=0;
+        }
+      }      
+      else if(lineValue<-1 || lineValue>9000) //Possiveis erros de leitura
+      {
+        lineValue=prevLineValue;
+      }
+      else //se valores normais
+      {
+        prevLineValue=lineValue;
+      }
+//      return lineValue;  // Valores de 0 a 9000
+      return (int)((double)(lineValue+1)*0.022222)-100;  // Valores de -100 a 100
 }

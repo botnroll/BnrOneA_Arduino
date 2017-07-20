@@ -14,6 +14,7 @@
 */
 
 #include <BnrOneA.h>   // Bot'n Roll ONE A library
+#include <EEPROM.h>    // EEPROM reading and writing
 #include <SPI.h>       // SPI communication library required by BnrOne.cpp
 #include <Wire.h>      // Compass
 #include <Servo.h>     // Gripper
@@ -27,8 +28,8 @@ Servo gripper2;
 
 #define ADDRESS 0x60                                          // Defines address of CMPS10
 
-#define echoPin 7 // Echo Pin
-#define trigPin 8 // Trigger Pin
+#define echoPin 6 // Echo Pin
+#define trigPin 7 // Trigger Pin
 #define maximumRange 200   // Maximum range needed (200cm)
 #define minimumRange   0   // Minimum range needed
 

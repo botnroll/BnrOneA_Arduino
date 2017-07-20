@@ -14,6 +14,7 @@ Gripper2 values vary between  18 - 120 (closed - opened)
 */
  
 #include <BnrOneA.h>   // Bot'n Roll ONE A library
+#include <EEPROM.h>    // EEPROM reading and writing
 #include <SPI.h>       // SPI communication library required by BnrOne.cpp
 #include <Servo.h>
 BnrOneA one;           // declaration of object variable to control the Bot'n Roll ONE A

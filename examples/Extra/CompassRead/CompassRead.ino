@@ -12,6 +12,7 @@
 *                    by James Henderson, 2012                   *
 *****************************************************************/
 #include <BnrOneA.h>   // Bot'n Roll ONE A library
+#include <EEPROM.h>    // EEPROM reading and writing
 #include <SPI.h>       // SPI communication library required by BnrOne.cpp
 #include <Wire.h>
 

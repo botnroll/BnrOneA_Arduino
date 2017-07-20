@@ -16,6 +16,7 @@ Placing an obstacle 2cm in front of the LEDS should turn IRS1 and IRS2 ON and OF
 */
 
 #include <BnrOneA.h>   // Bot'n Roll ONE A library
+#include <EEPROM.h>    // EEPROM reading and writing
 #include <SPI.h>       // SPI communication library required by BnrOne.cpp
 BnrOneA one;           // declaration of object variable to control the Bot'n Roll ONE A
 

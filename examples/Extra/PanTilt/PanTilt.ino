@@ -9,11 +9,12 @@ This example shows how to use the Pan&Tilt (using servos)
 
 NOTE:
 Servo1 values vary between  10 - 170 (right - left) -> PAN
-Servo2 values vary between  10 - 160 (upwards - head down) -> TILT
+Servo2 values vary between  30 - 130 (upwards - head down) -> TILT
 Avoid using the servos on the limit values.
 */
  
 #include <BnrOneA.h>   // Bot'n Roll ONE A library
+#include <EEPROM.h>    // EEPROM reading and writing
 #include <SPI.h>       // SPI communication library required by BnrOne.cpp
 BnrOneA one;           // declaration of object variable to control the Bot'n Roll ONE A
 
@@ -42,17 +43,17 @@ int button;
     button=one.readButton();
     switch (button)
     {
-        case 1: 
+        case 1: //Pan
                 if (Servo==1)
                   Pos_Servo1+=10;
                 else
                   Pos_Servo2+=10;
                 break;
-        case 2:
+        case 2:  //Tilt
                 if (Servo==1)
-                  Pos_Servo1-=10;
+                  Pos_Servo1-=5;
                 else
-                  Pos_Servo2-=10;
+                  Pos_Servo2-=5;
                 break;
   
         case 3: Servo++; if (Servo>2) Servo=1; break;

@@ -13,6 +13,7 @@ This function is used in the race challenge to detect the start of the race!
 */
 
 #include <BnrOneA.h>   // Bot'n Roll ONE A library
+#include <EEPROM.h>    // EEPROM reading and writing
 #include <SPI.h>       // SPI communication library required by BnrOne.cpp
 BnrOneA one;           // declaration of object variable to control the Bot'n Roll ONE A
 
@@ -24,7 +25,7 @@ void setup()
     Serial.begin(57600);     // set baud rate to 57600bps for printing values at serial monitor.
     one.spiConnect(SSPIN);   // start the communication module
     one.stop();              // stop motors
-    one.obstacleEmitters(OFF);// deactivate IR emitter LEDs
+    one.obstacleEmitters(ON);// activate IR emitter LEDs
 }
 
 void loop()

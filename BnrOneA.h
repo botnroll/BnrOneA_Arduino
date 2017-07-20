@@ -1,7 +1,7 @@
 /*
   BnrOneA.h - Library for interfacing with Bot'n Roll ONE Arduino Compatible from www.botnroll.com
   Created by José Cruz, November 28, 2013.
-  Updated December 19, 2014.
+  Updated August 24, 2016.
   Released into the public domain.
 */
 
@@ -12,6 +12,7 @@
 
 #define KEY1 0xAA // key used in critical commands
 #define KEY2 0x55 // key used in critical commands
+#define BRAKE_TORQUE 100
 #define OFF 0
 #define ON  1
 #define AN0 0
@@ -38,15 +39,18 @@
 #define COMMAND_MOVE            0xF6 //Move motors with no PID control
 #define COMMAND_BRAKE           0xF5 //Stop motors with brake torque
 #define COMMAND_BAT_MIN         0xF4 //Configure low battery level
-#define COMMAND_MOVE_PID	0xF3 //Move motor with PID control
-#define COMMAND_CALIBRATE	0xF2 //Calibrate motors
+#define COMMAND_MOVE_PID		0xF3 //Move motor with PID control
+#define COMMAND_CALIBRATE		0xF2 //Calibrate motors
 #define COMMAND_PID_CFG         0xF1 //Configure kp, ki and kd PID control values
-#define COMMAND_ENCL_RESET	0xF0 //Preset the value of encoder1
+#define COMMAND_ENCL_RESET		0xF0 //Preset the value of encoder1
 #define COMMAND_ENCR_RESET      0xEF //Preset the value of encoder2
 #define COMMAND_ENC_SAVE        0xEE //Save encoders position
 #define COMMAND_RAMP_CFG        0xED //Configure acceleration ramp parameters
 #define COMMAND_MOV_DIF_SI      0xEC //Move motors with SI units system
 #define COMMAND_DIF_SI_CFG      0xEB //Configure SI movement parameters
+#define COMMAND_MOVE_1M         0xEA //Move 1 motor with no PID control
+#define COMMAND_STOP_1M         0xE9 //Stop 1 motor
+#define COMMAND_BRAKE_1M        0xE8 //Brake 1 motor
 
 /*Read Commands-> requests to Bot'n Roll ONE */
 #define COMMAND_ADC0            0xDF //Read ADC0
@@ -57,14 +61,14 @@
 #define COMMAND_ADC5            0xDA //Read ADC5
 #define COMMAND_ADC6            0xD9 //Read ADC6
 #define COMMAND_ADC7            0xD8 //Read ADC7
-#define COMMAND_BAT_READ	0xD7 //Read ADC battery
-#define COMMAND_BUT_READ	0xD6 //Read ADC button
+#define COMMAND_BAT_READ		0xD7 //Read ADC battery
+#define COMMAND_BUT_READ		0xD6 //Read ADC button
 #define COMMAND_OBSTACLES       0xD5 //Read IR obstacle sensors
 #define COMMAND_IR_SENSORS      0xD4 //Read IR sensors instant value
 #define COMMAND_ENCL            0xD3 //Read Encoder1 position
 #define COMMAND_ENCR            0xD2 //Read Encoder2 position
-#define COMMAND_ENCL_INC	0xD1 //Read Encoder1 Incremental value
-#define COMMAND_ENCR_INC	0xD0 //Read Encoder2 Incremental value
+#define COMMAND_ENCL_INC		0xD1 //Read Encoder1 Incremental value
+#define COMMAND_ENCR_INC		0xD0 //Read Encoder2 Incremental value
 //#define COMMAND_LINE_READ	0xCF //Read Line Value (0-8000)
 
 
@@ -117,6 +121,7 @@ class BnrOneA
         int readAdc7();
         byte readButton();
         float readBattery();
+		int readLine();
         int readEncL();
         int readEncR();
         int readEncLInc();
@@ -130,9 +135,13 @@ class BnrOneA
         void servo2(byte position);
         void led(boolean state);// ON/OFF
         void move(int speedL,int speedR);
+		void move1m(byte motor, int speed);
         void movePID(int speedL,int speedR);
         void stop();
+		void stop1m(byte motor);
         void brake(byte torqueL,byte torqueR);
+		void brake1m(byte motor, byte torque);
+		void brake1m(byte motor);
         void resetEncL();
         void resetEncR();
 
@@ -148,6 +157,7 @@ class BnrOneA
         void lcd1(const char string[],unsigned int number);
         void lcd1(const char string[],long int number);
         void lcd1(const char string[],double number);
+		void lcd1(unsigned char stringA[8],unsigned char stringB[8]);
         void lcd1(int num1, int num2);
         void lcd1(unsigned int num1, unsigned int num2);
         void lcd1(int num1, int num2, int num3);
@@ -165,6 +175,7 @@ class BnrOneA
         void lcd2(const char string[],unsigned int number);
         void lcd2(const char string[],long int number);
         void lcd2(const char string[],double number);
+		void lcd2(unsigned char stringA[8],unsigned char stringB[8]);
         void lcd2(int num1, int num2);
         void lcd2(unsigned int num1, unsigned int num2);
         void lcd2(int num1, int num2, int num3);
@@ -172,6 +183,7 @@ class BnrOneA
         void lcd2(unsigned int num1, unsigned int num2, unsigned int num3);
         void lcd2(unsigned int num1, unsigned int num2, unsigned int num3, unsigned int num4);
 
+		
   private:
         byte spiRequestByte(byte command);
         int  spiRequestWord(byte command);

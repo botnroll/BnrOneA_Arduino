@@ -1,6 +1,6 @@
 /* 
  This example was created by José Cruz (www.botnroll.com)
- on 09 January 2015
+ on 20 July 2016
  
  How the program works:
  This examples calibrates the CMPS11 compass attached to Bot'n Roll ONE A.
@@ -13,6 +13,7 @@
 
 
 #include <BnrOneA.h>   // Bot'n Roll ONE A library
+#include <EEPROM.h>    // EEPROM reading and writing
 #include <SPI.h>       // SPI communication library required by BnrOne.cpp
 #include <Wire.h>
 
@@ -28,6 +29,7 @@ void setup()
   Serial.begin(57600);
   one.spiConnect(SSPIN);   // start SPI communication module
   one.stop();              // stop motors
+  delay(500);
 }
 
 float read_bearing()
@@ -83,19 +85,19 @@ void calibrateCMPS11()
    Wire.write(0);                             //Send the register we wish to start reading from
    Wire.write(0xF0);                          //Calibration sequence byte 1
    Wire.endTransmission();
-   delay(20);
+   delay(30);
 
    Wire.beginTransmission(ADDRESS);           //start communication with CMPS10
    Wire.write(0);                             //Send the register we wish to start reading from
    Wire.write(0xF5);                          //Calibration sequence byte 2
    Wire.endTransmission();
-   delay(20);
+   delay(30);
 
    Wire.beginTransmission(ADDRESS);           //start communication with CMPS10
    Wire.write(0);                             //Send the register we wish to start reading from
    Wire.write(0xF7);                          //Calibration sequence byte 2
    Wire.endTransmission();
-   delay(20);
+   delay(30);
    
    one.move(-20,20); // Slowly rotate the compass on the horizontal plane in all directions
    delay(15000);
@@ -104,11 +106,29 @@ void calibrateCMPS11()
    Wire.write(0);                             //Send the register we wish to start reading from
    Wire.write(0xF8);                          //Exit calibration mode
    Wire.endTransmission();
-   delay(20);
+   delay(30);
    one.move(0,0); // Stop rotation
 
 }
 
+void compassRead()
+{
+  float bearing;
+  char roll, pitch;
+  char temp[20];
+
+  bearing=read_bearing();
+  roll=read_roll();
+  pitch=read_pitch();
+
+  Serial.print("Bearing:"); Serial.print(bearing);
+  Serial.print("   roll:"); Serial.print((int)roll);
+  Serial.print("   pitch:"); Serial.println((int)pitch);
+
+  one.lcd1("Bearing: ", bearing);
+  sprintf(temp, "Rol:%d Pit:%d      ", (int)roll, (int)pitch);
+  one.lcd2(temp);
+}
 
 
 void loop()
@@ -123,17 +143,18 @@ char temp[20];
    while(one.readButton()!=1)
        delay(50);
 
-   one.lcd1("  Calibration");
-   one.lcd2("    Starting");
+   one.lcd1("  Calibrating");
+   one.lcd2("   Compass... ");
    delay(1000);
    calibrateCMPS11();
 
-   one.lcd1("  Calibration");
-   one.lcd2("    Ended");
+   one.lcd1("  Calibrating");
+   one.lcd2("    Finnished");
    delay(1000);
 
    while(one.readButton()!=1)
+   {
+       compassRead();
        delay(100);
-   
+   }
 }
-
