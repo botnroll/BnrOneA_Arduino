@@ -6,7 +6,7 @@
  http://www.botnroll.com
 
 Description:
-Prints a message on the robot LCD.
+Print a message on the robot LCD.
 */
 
 #include <BnrOneA.h>   // Bot'n Roll ONE A library

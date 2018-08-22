@@ -20,7 +20,7 @@ BnrOneA one;        //declaration of object variable to control the Bot'n Roll O
 void setup()
 {
     //setup routines
-    Serial.begin(57600);     // set baud rate to 57600bps for printing values in serial monitor. Press (ctrl+shift+m) after uploading6
+    Serial.begin(57600);     // set baud rate to 57600bps for printing values in serial monitor. Press (ctrl+shift+m) after uploading
     one.spiConnect(SSPIN);   // start the SPI module
     one.stop();              // stop motors
     one.lcd1(" Bot'n Roll ONE");

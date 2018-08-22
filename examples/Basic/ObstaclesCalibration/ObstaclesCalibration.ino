@@ -6,7 +6,7 @@
  http://www.botnroll.com
 
 Description:
-Calibrates IR for Obstacles detection
+Calibrate IR for Obstacles detection
 */
 
 #include <BnrOneA.h>   // Bot'n Roll ONE A library

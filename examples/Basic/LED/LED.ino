@@ -6,8 +6,8 @@
  http://www.botnroll.com
 
 Description:
-The LED is turned ON and OFF every second. 
-A messsage is sent to the Serial Monitor accordingly.
+The LED is switched ON and OFF every second. 
+A message is sent to the Serial Monitor accordingly.
 */
 
 #include <BnrOneA.h>   // Bot'n Roll ONE A library
@@ -29,7 +29,7 @@ void loop()
 {    
     one.led(HIGH);             // turn LED ON
     Serial.println("LED ON");  // print data on serial monitor.
-    delay(1000);               // waits 1 second
+    delay(1000);               // wait 1 second
     one.led(LOW);              // turn LED OFF
     Serial.println("LED OFF"); // print data on serial monitor.
     delay(1000);               // wait 1 second

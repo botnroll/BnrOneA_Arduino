@@ -5,8 +5,8 @@
  http://www.botnroll.com
 
 This program has a menu and several smaller programs in it.
-To use all the functions the Bot´n Noll ONE A must be equiped with:
- - Rescue module (2 RGB sensors and 3 sonars)
+To use all the functions the Bot´n Roll ONE A must be equipped with:
+ - Rescue module (2 RGB sensors and 3 sonar's)
  - Line sensor
  - RGB LED
  - Shield with 3 trimmers on A0 A1 A2
@@ -33,11 +33,11 @@ BnrRescue brm;         // declaration of object variable to control Bot'n Roll R
 #define LEDBUTTON   4
 #define LEDTRIMMER  5
 
-#define EXIT        99      //Exit menu Sair do menu
+#define EXIT        99      //Exit menu / Sair do menu
 
 //float batmin=10.5;  // safety voltage for discharging the battery
 int programa=0;       // selected program to be executed
-int botao=0;          // O botão que foi premido
+int botao=0;          // O botão que foi pressionado
 unsigned long tempo=0;
 unsigned long tempoRGB=0;
 
@@ -928,7 +928,7 @@ void obstaculos()
    brm.readSonars(&sonarL,&sonarC,&sonarR);    
 //   Serial.print("Sonars: ");Serial.print(sonarL,DEC); Serial.print(" , "); Serial.print(sonarC,DEC); Serial.print(" , "); Serial.println(sonarR,DEC);
    avoidObstacles();
-   delay(60); //Leitura dos sonares a cada 60 ms. 
+   delay(60); //Leitura dos sonares a cada 60 ms. / Read sonar´s every 60ms
 }
 
 void avoidObstacles(void)
@@ -990,7 +990,7 @@ void menuObstaculos()
     float temp=0.0;
     one.stop();
     one.lcd1("  Menu Config:");
-    while(one.readButton()==3) //Espera que se largue o botão 3 / waits until button 3 is released
+    while(one.readButton()==3) //Espera que se largue o botão 3 / wait until button 3 is released
     {
       delay(50);
     }
@@ -1010,7 +1010,7 @@ void menuObstaculos()
         }
         delay(100);
     }
-    while(one.readButton()==3) //Espera que se largue o botão 3 / waits until button 3 is released
+    while(one.readButton()==3) //Espera que se largue o botão 3 / wait until button 3 is released
     {delay(50);}
     ctrlDist=var;        
     //*************** slope ***************
@@ -1029,7 +1029,7 @@ void menuObstaculos()
         }
         delay(100);
     }
-    while(one.readButton()==3) //Espera que se largue o botão 3 / waits until button 3 is released
+    while(one.readButton()==3) //Espera que se largue o botão 3 / wait until button 3 is released
     {delay(50);}
     slope=var;      
     //*************** maxSpeed ***************
@@ -1048,7 +1048,7 @@ void menuObstaculos()
         }
         delay(100);
     }
-    while(one.readButton()==3) //Espera que se largue o botão 3 / waits until button 3 is released
+    while(one.readButton()==3) //Espera que se largue o botão 3 / wait until button 3 is released
     {delay(50);}
     maxSpeed=var;     
     

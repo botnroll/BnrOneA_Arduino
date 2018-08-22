@@ -5,7 +5,7 @@
  This code example is in the public domain. 
  http://www.botnroll.com
 
-This example shows how to use the Pan&Tilt (using servos)
+This example demonstrates the use of Pan&Tilt (using servos)
 
 NOTE:
 Servo1 values vary between  10 - 170 (right - left) -> PAN

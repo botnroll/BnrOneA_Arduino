@@ -5,10 +5,10 @@
  This code example is in the public domain. 
  http://www.botnroll.com
  
-This program shows how to use the Gripper.
+This example demonstrates the use of the Gripper.
 
 NOTE:
-Gripper1 values vary between  80 - 160 (upwards - downwards) - (130 corresopnds to Horizontal)
+Gripper1 values vary between  80 - 160 (upwards - downwards) - (130 corresponds to Horizontal)
 Gripper2 values vary between  18 - 120 (closed - opened)
 
 */
@@ -30,7 +30,7 @@ void setup()
     Serial.begin(57600);     // set baud rate to 57600bps for printing values at serial monitor.
     one.spiConnect(SSPIN);   // start SPI communication module
     one.stop();              // stop motors
-    one.lcd1(" Bot'n Roll ONE");
+    one.lcd1("Bot'n Roll ONE A");
     one.lcd2("www.botnroll.com");
     delay(1000);
 

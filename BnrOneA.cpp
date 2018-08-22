@@ -1,7 +1,7 @@
 /*
   BnrOneA.cpp - Library for interfacing with Bot'n Roll ONE Arduino Compatible from www.botnroll.com
   Created by José Cruz, November 28, 2013.
-  Updated August 24, 2016.
+  Updated June 06, 2018.
   Released into the public domain.
 */
 
@@ -385,6 +385,27 @@ int BnrOneA::readDBG(byte channel)
 /**************************************************************/
 /**** LCD LINE 1 Handlers *************************************/
 /**************************************************************/
+void BnrOneA::lcd1(String string)
+{   
+    int i,a;
+    byte buffer[19];
+    char string1[19],string2[19];
+    for(i=0;i<16;i++){
+        string2[i]=string[i];
+    }
+    string2[16]=0;
+    a=sprintf(string1,string2);
+    buffer[0]=KEY1;
+    buffer[1]=KEY2;
+    for(i=0;i<a;i++){
+        buffer[i+2]=string1[i];
+    }
+    for(i=a;i<16;i++){
+        buffer[i+2]=' ';
+    }
+    spiSendData(COMMAND_LCD_L1,buffer,sizeof(buffer));
+    delay(19);//Wait while command is processed
+}
 void BnrOneA::lcd1(byte string[])
 {   
     int i,a;
@@ -752,6 +773,27 @@ void BnrOneA::lcd1(int num1, int num2, int num3, int num4)
 /**************************************************************/
 /**** LCD LINE 2 Handlers *************************************/
 /**************************************************************/
+void BnrOneA::lcd2(String string)
+{
+    int i,a;
+    byte buffer[19];
+    char string1[19],string2[19];
+    for(i=0;i<16;i++){
+        string2[i]=string[i];
+    }
+    string2[16]=0;
+    a=sprintf(string1,string2);
+    buffer[0]=KEY1;
+    buffer[1]=KEY2;
+    for(i=0;i<a;i++){
+        buffer[i+2]=string1[i];
+    }
+    for(i=a;i<16;i++){
+        buffer[i+2]=' ';
+    }
+    spiSendData(COMMAND_LCD_L2,buffer,sizeof(buffer));
+    delay(19);//Wait while command is processed
+}
 void BnrOneA::lcd2(byte string[])
 {
     int i,a;
@@ -1118,7 +1160,6 @@ void BnrOneA::lcd2(int num1, int num2, int num3, int num4)
 
 /***********************************************************************************************/
 
-
 int BnrOneA::readLine()
 {	
 	  #define VMAX 1000
@@ -1226,3 +1267,4 @@ int BnrOneA::readLine()
 //      return lineValue;  // Valores de 0 a 9000
       return (int)((double)(lineValue+1)*0.022222)-100;  // Valores de -100 a 100
 }
+

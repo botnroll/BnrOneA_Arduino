@@ -37,14 +37,14 @@ void setup()
   Serial.begin(57600);     // sets baud rate to 57600bps for printing values at serial monitor.
   one.spiConnect(SSPIN);   // starts the SPI communication module
   one.stop();              // stop motors
-  one.minBat(batmin); // safety voltage for discharging the battery
+  one.minBat(batmin); 	   // safety voltage for discharging the battery
   delay(1000);
 }
 
 
 void loop() 
 {
-  int v25=10; //Velocidade para o valor da linha 25
+  int v25=10; //Speed for line value 25 <> Velocidade para o valor da linha 25
   int v37=15; 
   int v50=20; 
   int v62=25; 

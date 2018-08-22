@@ -7,7 +7,7 @@
 Every sensor have a specific weigh:
   S1  S2  S3  S4  S5  S6  S7  S8
 -100 -75 -50 -25 +25 +50 +75 +100
-Verifies wich sensors detect the line (black>Vtrans) and the result is the average weigh of these sensors.
+Verifies which sensors detect the line (black>Vtrans) and the result is the average weigh of these sensors.
 Note: Only 1 or 2 sensors are expected to detect the line at the same time.
 The 15 possible results for the line position are:
 -100 -87 -75 -62 -50 -37 -25 0 +25 +37 +50 +62 +75 +87 +100

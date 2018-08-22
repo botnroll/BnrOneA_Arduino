@@ -5,7 +5,7 @@
  This code example is in the public domain. 
  http://www.botnroll.com
 
-This program shows an example of how to use encoders onthe wheels.
+Read single channel encoders attached to Bot'n Roll ONE A wheels.
 */
  
 #include <BnrOneA.h>   // Bot'n Roll ONE A library
@@ -34,7 +34,7 @@ void setup()
     Serial.begin(57600);     // set baud rate to 57600bps for printing values at serial monitor.
     one.spiConnect(SSPIN);   // start the SPI communication module
     one.stop();              // stop motors
-    one.lcd1(" Bot'n Roll ONE");
+    one.lcd1("Bot'n Roll ONE A");
     one.lcd2("www.botnroll.com");
     encL=one.readEncL();
     encR=one.readEncR();

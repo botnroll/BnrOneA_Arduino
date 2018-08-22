@@ -6,13 +6,13 @@
  http://www.botnroll.com
 
 Description:
-Infra-Red obstacle detection LEDs (IRE1 and IRE2) are turned ON and OFF every second. 
+Infra-Red obstacle detection LEDs (IRE1 and IRE2) are switched ON and OFF every second. 
 Messages are printed on the LCD and Serial Monitor accordingly.
 WARNING!!!
-Infra-Red light can damage your eyes if you look to emmiting IR LED's.
-You will not be able to see the LED's emmiting light because human eyes cannot see infra-red light.
-You can see the IR LED's light using a camera (from you cell phone or smartphone, for example).
-Placing an obstacle 2cm in front of the LEDS should turn IRS1 and IRS2 ON and OFF.
+Infra-Red light can damage your eyes if you look to emitting IR LED's.
+You will not be able to see the LED's emitting light because human eyes cannot see infra-red light.
+You can see the IR LED's light using a camera (from you cell phone or smart-phone, for example).
+Placing an obstacle 2cm in front of the LEDS should switch IRS1 and IRS2 ON and OFF.
 */
 
 #include <BnrOneA.h>   // Bot'n Roll ONE A library

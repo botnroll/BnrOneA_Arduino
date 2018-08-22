@@ -1,7 +1,7 @@
 /*
   BnrOneA.h - Library for interfacing with Bot'n Roll ONE Arduino Compatible from www.botnroll.com
   Created by José Cruz, November 28, 2013.
-  Updated August 24, 2016.
+  Updated June 06, 2018.
   Released into the public domain.
 */
 
@@ -147,6 +147,7 @@ class BnrOneA
 
 
         //LCD Line 1 write routines
+		void lcd1(String string);
         void lcd1(byte string[]);
         void lcd1(const char string[]);
         void lcd1(int number);
@@ -165,6 +166,7 @@ class BnrOneA
         void lcd1(unsigned int num1, unsigned int num2, unsigned int num3);
         void lcd1(unsigned int num1, unsigned int num2, unsigned int num3, unsigned int num4);
         //LCD Line 2 write routines
+		void lcd2(String string);
         void lcd2(byte string[]);
         void lcd2(const char string[]);
         void lcd2(int number);

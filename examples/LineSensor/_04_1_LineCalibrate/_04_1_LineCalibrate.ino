@@ -4,25 +4,43 @@
  This code example is in the public domain. 
  http://www.botnroll.com
 
+Line sensor calibrate
+The calibrate routine is called in Setup()
+Reads and stores the maximum and minimum value for every sensor on vectors SValMax[8] and SValMin[8].
+Low values for white and high values for black.
+The transition value from white to black (Vtrans) is defined by the user:
+  Vtrans is the lowest value above white colour that can be considered black.
+  By default is suggested the highest of the lower values.
+  Vtrans should be as low as possible as long as it assures a safe transition from white to black.
+Stores the values on EEPROM so they can be used in your programs after robot restart.
+
+To calibrate place the robot over the line with the line at the centre of the sensor.
+The robot rotates during 4 seconds acquiring the 8 sensor max and min values.
+
+The registered values are displayed on the LCD. Use the push buttons to see more values.
+Calibration ends after you define Vtrans value.
+In order to adjust Vtrans, sensor reading values should be analysed in real time and at different places on the track.
+ 
+<> 
+ 
 Calibração do sensor de linha.
 A rotina de calibração é chamada do Setup()
 Analisa e regista os valores máximos e mínimos de cada sensor usando os vectores SValMax[8] e SValMin[8].
 Valores baixos para cor branca e elevados para cor preta.
 O valor de transição de branco para preto (Vtrans) é definido pelo utilizador:
-  Vtans deve ser visto como: o valor mais baixo acima da cor branca que podemos considerar como sendo preto.
+  Vtrans é o valor mais baixo acima da cor branca que podemos considerar como sendo preto.
   Por defeito é sugerido o maior valor dos mínimos.
   Vtrans deverá ser o mais baixo possível mas que permita destinguir a transição de branco para preto com segurança.
 Armazena os valores na EEPROM para uso futuro em outros programas.
 
-A calibração pode ser efetuada com o robô parado ou em movimento:
-  Com o robô parado calibra até se carregar num botão.
-  Em movimento calibra com o robô a rodar durante 4 segundos. Colocar o robo no chão com a linha ao centro.
-Comentários no código permitem a selecção do modo de calibração.
+Para calibrar deve-se colocar o robô em cima da linha com a linha no centro do sensor.
+O robô roda durante 4 segundos adquirindo os valores maximos e mínimos dos 8 sensores.
 
 Os valores registados são apresentados no LCD. Usar botões para apresentar mais valores.
 A calibração só termina depois de definido o valor de transição Vtrans.  
 Para ajustar Vtrans devem ser analisados os valores de leitura em tempo real e em diferentes posições da pista.
 */
+
 #include <BnrOneA.h>   // Bot'n Roll ONE A library
 #include <EEPROM.h>    // EEPROM reading and writing
 #include <SPI.h>       // SPI communication library required by BnrOne.cpp
@@ -47,33 +65,36 @@ void setup()
   one.spiConnect(SSPIN);   // starts the SPI communication module
   one.stop();              // stop motors
   one.minBat(batmin);      // safety voltage for discharging the battery
-  calibrateLine();         // Calibração do sensor de linha
-  setupLine();
   delay(1000);
-}
+  calibrateLine();         // Calibrate line sensor <> Calibração do sensor de linha
+  setupLine();
+ }
 
 void calibrateLine()
 {
+	one.lcd1(" Press a button ");
+	one.lcd2("  to calibrate  ");
+	while(one.readButton()==0)
+		delay(50);
+  Serial.println("Calibrate Starting!");
+  one.lcd1("   Calibrate   ");
+  one.lcd2("   starting!    ");
+	delay(1000);
+
     static int SVal[8]={0,0,0,0,0,0,0,0};    
     static int SValMax[8]={0,0,0,0,0,0,0,0};
     static int SValMin[8]={1023,1023,1023,1023,1023,1023,1023,1023};
     int butt=0;
-    Serial.println("Calibrating Starting!");
-    one.lcd1("  Calibrating   ");
-    one.lcd2("   starting!    ");
+
     while(one.readButton()!=0)
     {
       delay(50);
     }
-    Serial.println("Press any button to end calibrate!");
-    one.lcd1("Press any button");
-    one.lcd2("to end calibrate");
- 
-//Calibração com o robô parado ou em movimento    
-    one.move(25,-25);            //Em movimento calibra durante 4 segundos
+
+ //Calibrates during 4 seconds <> Calibra durante 4 segundos
+    one.move(25,-25);            
     unsigned long time=millis();
     while(millis()<time+4000)
-//  while(one.readButton()==0)     //Com o robô parado calibra até se carregar num botão
     {
       Serial.println(); Serial.print("Val: ");
       for(int i=0;i<8;i++)
@@ -110,7 +131,7 @@ void calibrateLine()
    Serial.print("Vtrans:");Serial.println(Vtrans);
    one.stop();
 
-   //Escrever valores na EEPROM
+   //Write values on EEPROM <> Escrever valores na EEPROM
    byte eepromADD=100;
    for(int i=0;i<8;i++)
    {
@@ -172,8 +193,8 @@ void calibrateLine()
        {
           delay(100);
        }         
-       one.lcd1("  Verify white ");
-       one.lcd2("   for Vtrans: ");
+       one.lcd1(" Test white to  ");
+       one.lcd2(" adjust Vtrans: ");
        while(one.readButton()!=0)
        {
           delay(100);
@@ -196,8 +217,8 @@ void calibrateLine()
           one.lcd2(SVal[4]-SValMin[4],SVal[5]-SValMin[5],SVal[6]-SValMin[6],SVal[7]-SValMin[7]);
           delay(100);
        }
-       one.lcd1("  Define Value ");
-       one.lcd2("  Vtrans:", Vtrans);
+       one.lcd1("  PB1++  PB2-- ");
+       one.lcd2("   Vtrans:", Vtrans);
        while(one.readButton()!=0)
        {
           delay(100);
@@ -209,13 +230,13 @@ void calibrateLine()
         if(butt==1)
         {
           Vtrans+=10;
-          one.lcd2("  Vtrans:", Vtrans);
+          one.lcd2("   Vtrans:", Vtrans);
           delay(100);
         }
         if(butt==2)
         {
           Vtrans-=10;
-          one.lcd2("  Vtrans:", Vtrans);
+          one.lcd2("   Vtrans:", Vtrans);
           delay(100);
         }
        }
@@ -223,8 +244,8 @@ void calibrateLine()
        eepromADD++;
        EEPROM.write(eepromADD,lowByte(Vtrans));
        eepromADD--;
-       one.lcd1(" Calibrate done ");
-       one.lcd2("PB1=see PB3=exit");
+       one.lcd1("PB1=AdjustVtrans");
+       one.lcd2("PB3=end");
        while(one.readButton()!=0)
        {
           delay(100);
@@ -244,16 +265,16 @@ void calibrateLine()
 
 void loop() 
 {
-  int line=readLine(); //Ler a linha
+  int line=readLine(); // Read line <> Ler a linha
   Serial.print(" Line:"); Serial.println(line); 
-  one.lcd1("     Line:"); //Apresenta valores no LCD
-  one.lcd2("     ",line); //Apresenta valores no LCD
+  one.lcd1("     Line:"); //Print values on the LCD <> Apresenta valores no LCD
+  one.lcd2("     ",line); //Print values on the LCD <> Apresenta valores no LCD
   delay(50);
 }
 
 void setupLine()
 {  
-   //Ler valores da EEPROM
+   //Read EEPROM values <> Ler valores da EEPROM
    byte eepromADD=100;
    Serial.println("Setup:"); Serial.print("Max: ");
    for(int i=0;i<8;i++)
@@ -283,7 +304,7 @@ void setupLine()
    
    for(int i=0;i<8;i++)
    {
-      SFact[i]=(double)VMAX/(double)(SValMax[i]-SValMin[i]); //Calcular fator de cada sensor
+      SFact[i]=(double)VMAX/(double)(SValMax[i]-SValMin[i]); //Calculate factor for each sensor <> Calcular fator de cada sensor
    }
 }
 
@@ -297,42 +318,43 @@ int readLine()
       int flag=-1;
       static int prevLineValue=0;
 
-      //Leitura dos valores dos 8 sensores
+	  
+      //Read the 8 sensor values <> Leitura dos valores dos 8 sensores
       for(int i=0;i<8;i++)
       {
           SValR[i]=one.readAdc(i);
       }
 
-      //Normalizar valores entre 0 e 1000
+      //Normalize values between 0 and 1000 <> Normalizar valores entre 0 e 1000
       for(int i=1;i<9;i++)
       {
           SValN[i]=(int)((double)((SValR[i-1]-SValMin[i-1]))*SFact[i-1]); //Registar o valor efetivo máximo de cada sensor
           if(SValN[i]>SMax)
             {
-              SMax=SValN[i]; //Identificar o sensor com valor efectivo máximo
-              idMax=i;       //Registar o indice do sensor
+              SMax=SValN[i]; //Identify the sensor with the highest value <> Identificar o sensor com valor efectivo máximo
+              idMax=i;       //Store the sensor index <> Registar o indice do sensor
             }
       }
       
-      if(SMax>Vtrans && SValN[idMax-1]>=SValN[idMax+1]) //Se o anterior for maior que o seguinte
+      if(SMax>Vtrans && SValN[idMax-1]>=SValN[idMax+1]) //If previous is bigger than the next <> Se o anterior for maior que o seguinte
       {
           lineValue=VMAX*(idMax-1)+SValN[idMax];     
              flag=0;
       }
-      else if(SMax>Vtrans && SValN[idMax-1]<SValN[idMax+1]) //Se o anterior for menor que o seguinte
+      else if(SMax>Vtrans && SValN[idMax-1]<SValN[idMax+1]) //If previous is smaller than the next <> Se o anterior for menor que o seguinte
       {
-          if(idMax!=8) // Se não é o último sensor
+          if(idMax!=8) //If not the last sensor <> Se não é o último sensor
           {
              lineValue=VMAX*idMax+SValN[idMax+1];
              flag=1;
           }
-          else //Se é o último sensor
+          else //If this is the last sensor <> Se é o último sensor
           {
              lineValue=VMAX*idMax+VMAX-SValN[idMax];
              flag=2;
           }
       }
-      if(lineValue==-1)//saíu da linha -> tudo branco
+      if(lineValue==-1)//Lost the line -> all white <> Saiu da linha -> tudo branco
       {
         if(prevLineValue>4500)
         {
@@ -343,15 +365,15 @@ int readLine()
           lineValue=0;
         }
       }      
-      else if(lineValue<-1 || lineValue>9000) //Possiveis erros de leitura
+      else if(lineValue<-1 || lineValue>9000) //Possible reading errors <> Possiveis erros de leitura
       {
         lineValue=prevLineValue;
       }
-      else //se valores normais
+      else //If normal values <> Se valores normais
       {
         prevLineValue=lineValue;
       }
-  //    return lineValue;  // Valores de 0 a 9000
-      return (int)((double)(lineValue+1)*0.022222)-100;  // Valores de -100 a 100
+  //    return lineValue;  //Values from 0 to 9000 <> Valores de 0 a 9000
+      return (int)((double)(lineValue+1)*0.022222)-100;  //Values from -100 to 100 <> Valores de -100 a 100
 }
 

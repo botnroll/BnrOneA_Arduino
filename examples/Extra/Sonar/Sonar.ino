@@ -14,21 +14,20 @@
  http://www.botnroll.com
 */
  
-#include <SPI.h>                   // required by BnrOne.cpp
+#include <SPI.h>       // required by BnrOne.cpp
 #include <BnrOneA.h>
 #include <EEPROM.h>    // EEPROM reading and writing
 
 //constants definitions
-#define SSPIN  2    //Slave Select (SS) pin for SPI communication
+#define SSPIN  2      //Slave Select (SS) pin for SPI communication
 
-#define echoPin 6 // Echo Pin
-#define trigPin 7 // Trigger Pin
-#define LEDPin 13 // Onboard LED
+#define echoPin 6    // Echo Pin
+#define trigPin 7    // Trigger Pin
 
 BnrOneA one;         //declaration of object variable to control the Bot'n Roll ONE
 
-#define maximumRange 200   // Maximum range needed (200cm)
-#define minimumRange   0   // Minimum range needed
+#define maximumRange 200   // Maximum range (200cm)
+#define minimumRange   0   // Minimum range
 
 int Sonar()
 {
@@ -44,7 +43,7 @@ int Sonar()
   
     digitalWrite(trigPin, LOW);
     duration = pulseIn(echoPin, HIGH, 11640);
-    delayMicroseconds(16000 - (micros()-tempo));  // esta rotina demora sempre o mesmo tempo (maximo 16 milisegundos)
+    delayMicroseconds(16000 - (micros()-tempo));  // this routine has fixed time (16 milliseconds)
   
     //Calculate the distance (in cm) based on the speed of sound
     distance = (int)(duration/58.2);
@@ -59,7 +58,7 @@ void setup()
     //setup routines
     Serial.begin(57600);    // set baud rate to 115200bps for printing values in serial monitor.
     one.spiConnect(SSPIN);  // start SPI module
-    one.stop();              // stop motors
+    one.stop();             // stop motors
 
     one.lcd1("www.botnroll.com");
     one.lcd2(" ");
@@ -67,7 +66,6 @@ void setup()
     // SONAR setup
     pinMode(trigPin, OUTPUT);
     pinMode(echoPin, INPUT);
-    pinMode(LEDPin,  OUTPUT); // Use LED indicator (if required)
 }
 
 void loop()

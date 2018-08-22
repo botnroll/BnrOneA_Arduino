@@ -6,7 +6,7 @@
  http://www.botnroll.com
 
 Description:
-Reads the Push Buttons state and prints the result on the robot LCD and Serial Monitor.
+Read the Push Buttons state and print the result on the robot LCD and Serial Monitor.
 Press PB1, PB2 or PB3 to interact with Bot'n Roll ONE A
 */
 

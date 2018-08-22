@@ -7,8 +7,8 @@ Product can be found here:http://www.botnroll.com/index.php?id_product=131&contr
  on 17 March 2015
  
 How the program works:
-Using the Bot'n Roll ONE A pan & tilt module scans an area for the highest temperature. 
-In the end of the scan points to the place here the highest temperature was found. 
+Using the pan & tilt module, Bot'n Roll ONE A scans an area for the highest temperature. 
+At the end of the scan, points to the place here the highest temperature was found. 
 Waits 3 seconds and starts a new scan.
 
 Pan & tilt Module with sonar: http://www.botnroll.com/index.php?id_product=813&controller=product&id_lang=7
@@ -26,7 +26,7 @@ BnrOneA one;           // declaration of object variable to control the Bot'n Ro
 #define SSPIN  2       // Slave Select (SS) pin for SPI communication
 #define ADDRESS     0x68      // Address of TPA81
 #define SOFTREG     0x00      // Byte for software version
-#define AMBIANT     0x01      // Byte for ambiant temperature
+#define AMBIENT     0x01      // Byte for ambient temperature
 #define PAN_MIN     50
 #define PAN_MAX     185
 #define PAN_INC     35        //Increment angle for pan sweep -> 4x35=140 
@@ -38,7 +38,7 @@ BnrOneA one;           // declaration of object variable to control the Bot'n Ro
 #define TEMP_ARRAY  8         //Temperature array size
 
 
-int temperature[TEMP_ARRAY] = {0,0,0,0,0,0,0,0};                   // Array to hold temperature data
+int temperature[TEMP_ARRAY] = {0,0,0,0,0,0,0,0};     // Array to store temperature data
 int temper_average[PAN_MOVES][TILT_MOVES];
 int p,t,pan,tilt;
 
@@ -50,12 +50,12 @@ void setup()
     Wire.begin();
   
     byte software = getData(SOFTREG);      // Get software version 
-    one.lcd1("TPA81 Version: ",software);    // Print software version on LCD
+    one.lcd1("TPA81 Version: ",software);  // Print software version on LCD
     Serial.print(" Software Ver: "); Serial.println(software);
 
-    int ambiantTemp = getData(AMBIANT);                    // Get reading of ambiant temperature and print to LCD03 screen
-    one.lcd2("Ambiant: ",ambiantTemp);
-    Serial.print("Ambiant: "); Serial.println(ambiantTemp);
+    int ambientTemp = getData(AMBIENT);    // Get reading of ambient temperature and print to LCD03 screen
+    one.lcd2("Ambient: ",ambientTemp);
+    Serial.print("Ambient: "); Serial.println(ambientTemp);
 
     delay(2000);  //Pause to read LCD
 }
@@ -78,7 +78,7 @@ void loop()
               delay(75);
             delay(40);
             int sum=0;
-            for(int i = 0; i < 8; i++)              // Loops and stores temperature data in array
+            for(int i = 0; i < 8; i++)      // Loops and stores temperature data in array
             {                            
                 temperature[i] = getData(i+2);
                 sum+=temperature[i];
@@ -126,13 +126,14 @@ void loop()
     delay(3000);
 }
 
+// Function to receive one byte of data from TPA81
 byte getData(byte reg)
-{                                   // Function to receive one byte of data from TPA81
-    Wire.beginTransmission(ADDRESS);                        // Begin communication with TPA81
-    Wire.write(reg);                                        // Send reg to TPA81
+{                                   
+    Wire.beginTransmission(ADDRESS);   // Begin communication with TPA81
+    Wire.write(reg);                   // Send reg to TPA81
     Wire.endTransmission();
-    Wire.requestFrom(ADDRESS, 1);                           // Request 1 byte
-    while(Wire.available() < 1);                            // Wait for byte to arrive
-    byte data = Wire.read();                                // Get byte
-    return(data);                                           // return byte
+    Wire.requestFrom(ADDRESS, 1);      // Request 1 byte
+    while(Wire.available() < 1);       // Wait for byte to arrive
+    byte data = Wire.read();           // Get byte
+    return(data);                      // return byte
 }

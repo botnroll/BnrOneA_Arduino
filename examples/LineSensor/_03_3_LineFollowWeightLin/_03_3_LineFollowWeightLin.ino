@@ -6,11 +6,11 @@
 
 Line Following:
 15 possible values for line position:-100 -87 -75 -62 -50 -37 -25 0 +25 +37 +50 +62 +75 +87 +100
-The speed of the motors is adusted using a linear aproach and gain (k)
+The speed of the motors is adjusted using a linear approach and gain (k)
 <>
 Seguimento de linha:
 15 valores possiveis para a posiçao da linha: -100 -87 -75 -62 -50 -37 -25 0 +25 +37 +50 +62 +75 +87 +100
-A velocidade dos motores é ajustada segundo uma abordagem linear (reta) e ganho (k = declive da reta)
+A velocidade dos motores é ajustada numa abordagem linear (reta) e ganho (k = declive da reta)
 */
  
 #include <BnrOneA.h>   // Bot'n Roll ONE A library

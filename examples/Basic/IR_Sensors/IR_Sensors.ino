@@ -6,7 +6,7 @@
  http://www.botnroll.com
 
 Description:
-An external IR 40khz source can be detected by the IR sensors. Another Bot´n Roll ONE A emmiting IR will be detected.
+An external IR 40khz source can be detected by the IR sensors. Another Bot´n Roll ONE A emitting IR will be detected.
 This function can be used to remote control the robot with IR.
 This function is used in the race challenge to detect the start of the race!
 
@@ -30,7 +30,7 @@ void setup()
 
 void loop()
 {
-byte ir_sensors=0;
+    byte ir_sensors=0;
 
     ir_sensors=one.readIRSensors();      // read actual IR sensors state
     Serial.print("IR Sensors ");         // print data on serial monitor.

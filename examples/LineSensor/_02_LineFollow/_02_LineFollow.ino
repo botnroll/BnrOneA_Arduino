@@ -5,7 +5,7 @@
  http://www.botnroll.com
 
 Line Following:
-Test wich sensor detects the line by comparing sensor values.
+Test which sensor detects the line by comparing sensor values.
 The motors speed is set for each sensor detecting the line.
 <>
 Seguimento de linha:
@@ -30,9 +30,10 @@ BnrOneA one;           // declaration of object variable to control the Bot'n Ro
 //Battery protection (lower voltage)
 //Protecção da bateria (tensão mínima)
 float batmin=10.5;
-int vel=40;
+
 //Speed for the robot movement
 //Velocidade do robô
+int vel=40;
 
 void setup() 
 {  
@@ -54,8 +55,8 @@ void setup()
 
 void loop() 
 {
-      //Read values from the 8 sensors
-      //Ler o valor dos 8 sensores
+      //Read the 8 sensors
+      //Ler os 8 sensores
       int sensor0 = one.readAdc(0);
       int sensor1 = one.readAdc(1);
       int sensor2 = one.readAdc(2);
@@ -65,7 +66,8 @@ void loop()
       int sensor6 = one.readAdc(6);
       int sensor7 = one.readAdc(7);
 
-      //Lado esquerdo do exterior para o centro      
+      //From left to centre
+      //Lado esquerdo do exterior para o centro  
       if(sensor0 > Vtrans )//10000000
       {
         one.move(-1,40);
@@ -82,6 +84,7 @@ void loop()
       {
         one.move(vel,vel);
       }      
+      //From right to centre
       //Lado direito do exterior para o centro
       else if(sensor7 > Vtrans)//00000001
       {

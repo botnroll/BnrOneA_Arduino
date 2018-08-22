@@ -5,7 +5,7 @@ Product can be found here:http://www.botnroll.com/index.php?id_product=131&contr
 
  This sketch originates from:
 ********************************************
-*    arduino example for TPA81 and LCD03    *
+*    Arduino example for TPA81 and LCD03    *
 *         TPA81 controlled by I2C           *
 *        LCD03 controlled by serial         *
 *                                           *
@@ -33,9 +33,9 @@ BnrOneA one;           // declaration of object variable to control the Bot'n Ro
 #define SSPIN  2       // Slave Select (SS) pin for SPI communication
 #define ADDRESS     0x68       // Address of TPA81
 #define SOFTREG     0x00       // Byte for software version
-#define AMBIANT     0x01       // Byte for ambiant temperature
+#define AMBIENT     0x01       // Byte for ambient temperature
 
-int temperature[] = {0,0,0,0,0,0,0,0};                   // Array to hold temperature data
+int temperature[] = {0,0,0,0,0,0,0,0};                   // Array to store temperature data
 
 void setup()
 {
@@ -48,9 +48,9 @@ void setup()
     one.lcd1("TPA81 Version: ",software);    // Print software version on LCD
     Serial.print(" Software Ver: "); Serial.println(software);
 
-    int ambiantTemp = getData(AMBIANT);                    // Get reading of ambiant temperature and print to LCD03 screen
-    one.lcd2("Ambiant: ",ambiantTemp);
-    Serial.print("Ambiant: "); Serial.println(ambiantTemp);
+    int ambientTemp = getData(AMBIENT);                    // Get reading of ambient temperature and print to LCD03 screen
+    one.lcd2("Ambient: ",ambientTemp);
+    Serial.print("Ambient: "); Serial.println(ambientTemp);
 
     delay(2000);  //Pause to read LCD
 }

@@ -8,7 +8,8 @@
  This code example is in the public domain. 
  http://www.botnroll.com
 
-This program detects automatic start on the race.
+Description:  
+This program detects automatic start on the race challenge.
 */
 
 #include <BnrOneA.h>   // Bot'n Roll ONE A library
@@ -25,31 +26,31 @@ void setup()
 	one.stop();             // stop motors
 	one.lcd1("IR testing"); // print on LCD line 1
 	one.lcd2("STOP");       // print on LCD line 2
-	one.obstacleEmitters(OFF); //Deactivate obstacles IR emitters
-	delay(4000);           //Time to stabilize IR sensors (DO NOT REMOVE!!!)
+	one.obstacleEmitters(OFF); // deactivate obstacles IR emitters
+	delay(4000);           // time to stabilize IR sensors (DO NOT REMOVE!!!)
         static byte start=0;
  	while(!start)
         {
           start=automatic_start();
         }
- 	one.move(50,50); //The robot starts by moving forwards
- 	one.lcd2("GO"); //Remove when racing for best performance!
+ 	one.move(50,50); // the robot move forward
+ 	one.lcd2("GO"); // remove when racing for best performance!
 }
 
 
 bool automatic_start()
 { 
-	bool actstate=one.readIRSensors(); //read actual IR sensors state
+	bool actstate=one.readIRSensors(); // read actual IR sensors state
 	
-	if(!actstate) //If state is LOW
+	if(!actstate) // If state is LOW
 	{
-		unsigned long int tempo_A=millis(); //read time
-		while(!actstate) //while state is LOW
+		unsigned long int tempo_A=millis(); // read time
+		while(!actstate) // while state is LOW
 		{
-			actstate=one.readIRSensors(); //read actual IR sensors state
-			if((millis()-tempo_A)>50) //if time is low for more than 50ms
+			actstate=one.readIRSensors(); // read actual IR sensors state
+			if((millis()-tempo_A)>50) // if time is low for more than 50ms
 			{
-				return true; //Start Race
+				return true; // start Race
 			}
 		}
 	}

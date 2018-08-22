@@ -12,7 +12,7 @@ int Sonar()
   
     digitalWrite(trigPin, LOW);
     duration = pulseIn(echoPin, HIGH, 11640);
-    delayMicroseconds(16000 - (micros()-tempo));  // esta rotina demora sempre o mesmo tempo (maximo 16 milisegundos)
+    delayMicroseconds(16000 - (micros()-tempo));  // this routine has fixed time (16 milliseconds)
   
     //Calculate the distance (in cm) based on the speed of sound
     distance = (int)(duration/58.2);

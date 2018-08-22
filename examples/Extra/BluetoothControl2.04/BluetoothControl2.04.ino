@@ -7,11 +7,11 @@
  This code example is in the public domain. 
  http://www.botnroll.com
 
- This program allows communication with the BnrOneA APP for Android using a Bluetooth Shield attached to Bot'n Roll ONE A robot.
+ Remote control the Bot'n Roll ONE A robot using BnrOneA APP for Android, a Bluetooth Shield on the robot and Bluetooth communication.
  This program must be uploaded to the robot when using the Android APP to control Bot'n Roll ONE A using Bluetooth.
 */
 #include <Wire.h>      // required by BnrRescue.cpp
-#include <BnrRescue.h> // Bot'n Roll CoSpace Rescue Module library
+#include <BnrRescue.h> // Bot'n Roll Rescue Module library
 #include <BnrOneA.h>   // Bot'n Roll ONE A library
 #include <SPI.h>       // SPI communication library required by BnrOne.cpp
 #include <Servo.h>     // Gripper
@@ -21,26 +21,26 @@
 //#define READBLUE
 
 //constants definitions
-#define MODULE_ADDRESS 0x2C        //default factory address
-#define SSPIN  2       // Slave Select (SS) pin for SPI communication
+#define MODULE_ADDRESS 0x2C   //Rescue Module I2C address
+#define SSPIN  2        // Slave Select (SS) pin for SPI communication
 
-#define echoPin 8 // Echo Pin
-#define trigPin 7 // Trigger Pin
+#define echoPin 8 // Sonar Echo Pin
+#define trigPin 7 // Sonar Trigger Pin
 
-#define ADDRESSCMPS10 0x60  // Defines address of CMPS10
+#define ADDRESSCMPS10 0x60  // CMPS11 I2C address
 
-#define ADDRESSTPA81     0x68       // Address of TPA81
+#define ADDRESSTPA81 0x68      // TPA81 I2C address
 #define SOFTREG     0x00       // Byte for software version
-#define AMBIANT     0x01       // Byte for ambiant temperature
+#define AMBIENT     0x01       // Byte for ambient temperature
 
 #define maximumRange 200   // Maximum range needed (200cm)
 #define minimumRange   0   // Minimum range needed
 
-#define R 3
-#define G 5
-#define B 6
+#define R 3	// Red 
+#define G 5 // Green
+#define B 6 // Blue
 
-#define LS1  0
+#define LS1  0 // Line Sensor 0
 #define LS2  1
 #define LS3  2
 #define LS4  3
@@ -49,11 +49,11 @@
 #define LS7  6
 #define LS8  7
 
-#define BuzzerPin  9
+#define BuzzerPin  9 // Buzzer pin
 
 
-BnrRescue brm;         // declaration of object variable to control Bot'n Roll Rescue Module
-BnrOneA one;           // declaration of object variable to control the Bot'n Roll ONE A
+BnrRescue brm; // declaration of object variable to control Bot'n Roll Rescue Module
+BnrOneA one;   // declaration of object variable to control the Bot'n Roll ONE A
 
 Servo Gripper;
 Servo Lift;
@@ -67,7 +67,7 @@ int tempOffset = 5;
 
 bool asLineSensor = false,asCompass = false,asGripper = false,asSearchAndRescue = false,asCoSpace = false,asTemperature = false;
 
-// the setup function runs once when you press reset or power the board
+// the setup function runs once on power on or after pressing the reset button
 void setup() {
   //setup routines
   brm.i2cConnect(MODULE_ADDRESS);    //Enable I2C communication
@@ -75,15 +75,15 @@ void setup() {
   brm.setSonarStatus(ENABLE);   //Enable/Disable Sonar scanning
   brm.setRgbStatus(ENABLE);     //Enable/Disable RGB scanning
   
-  one.spiConnect(SSPIN);   // starts the SPI communication module
+  one.spiConnect(SSPIN);  // starts the SPI communication module
   one.stop();             // stops motors
-  Wire.begin();          // Conects I2C
+  Wire.begin();           // start I2C BUS
   
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
 
-  Gripper.attach(5);    // Attach the Servo variable to pin 5
-  Lift.attach(3);    // Attach the Servo variable to pin 3
+  Gripper.attach(5);  // Attach the Servo variable to pin 5
+  Lift.attach(3);     // Attach the Servo variable to pin 3
   
   one.servo1(90); //Central position 0º - 180º
   one.servo2(90); //Central position 0º - 180º
@@ -103,13 +103,11 @@ void setup() {
   analogWrite(G, 0);//GREEN    
   analogWrite(B, 0);//BLUE 
   
-  one.minBat(10.5);        // define de minimum battery voltage. Robot stops if voltage is below the specified value!
+  one.minBat(10.5);   // define de minimum battery voltage. Robot stops if voltage is below the specified value!
   
-  Serial.begin(9600);//setup SerialPort
+  Serial.begin(9600); //setup SerialPort
   
   t.every(dataSendTimeout, sendData);
-  
-  
 }
 
 // the loop function runs over and over again forever
@@ -179,19 +177,16 @@ void loop() {
         asGripper = getValue(readBlueTooth, ',', 2).toInt();
         asSearchAndRescue = getValue(readBlueTooth, ',', 3).toInt();
         asCoSpace = getValue(readBlueTooth, ',', 4).toInt();
-        asTemperature = getValue(readBlueTooth, ',', 5).toInt();
-        
+        asTemperature = getValue(readBlueTooth, ',', 5).toInt();     
      }
- 
   }
-  
 }
 
 float yaw = 0;
 char roll = 0, pitch = 0;
 byte pbutton;
 long distance = 0;
-int ambiantTemp = 0;
+int ambientTemp = 0;
 int mediaTempTPA81 = 0;
 byte sonarL=0, sonarC=0, sonarR=0;
 byte rgbL[3]={0,0,0};
@@ -202,7 +197,6 @@ float battery;
 
 void sendData()
 {
-  
   if(asCompass){
     yaw = read_yaw();
     roll = read_roll();
@@ -220,12 +214,11 @@ void sendData()
         mediaTempTPA81 += getData(i+2);
     }
     mediaTempTPA81 = mediaTempTPA81 /8;
-    ambiantTemp = getData(AMBIANT);                    // Get reading of ambiant temperature and print to LCD03 screen
-  
+    ambientTemp = getData(AMBIENT);                    // Get reading of ambient temperature and print to LCD03 screen
   }
   
   if(asCoSpace){
-  brm.readSonars(&sonarL,&sonarC,&sonarR);       //Read the 3 sonars distance in cm
+  brm.readSonars(&sonarL,&sonarC,&sonarR);       //Read the 3 sonar's distance in cm
   
   brm.readRgbL(&rgbL[0],&rgbL[1],&rgbL[2]);      //Read Left RGB sensor
   brm.readRgbR(&rgbR[0],&rgbR[1],&rgbR[2]);      //Read Right RGB sensor
@@ -243,7 +236,7 @@ void sendData()
   Serial.print(","); Serial.print(pbutton);//3
   Serial.print(","); Serial.print(distance);//4
   Serial.print(","); Serial.print(mediaTempTPA81-tempOffset);//5
-  Serial.print(","); Serial.print(ambiantTemp);//6
+  Serial.print(","); Serial.print(ambientTemp);//6
   Serial.print(","); Serial.print(sonarL);//7
   Serial.print(","); Serial.print(sonarC);//8
   Serial.print(","); Serial.print(sonarR);//9

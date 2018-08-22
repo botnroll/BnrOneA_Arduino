@@ -6,7 +6,7 @@
  http://www.botnroll.com
 
 Description:
-Reads the battery voltage and prints its value on the LCD and through Serial Monitor.
+Read the battery voltage and print its value on the LCD and Serial Monitor.
 Also configures the minimum battery voltage that causes the robot to stop if voltage is below the defined value.
 It is VERY important that you define this minimum voltage correctly to preserve your robot battery life.
 */

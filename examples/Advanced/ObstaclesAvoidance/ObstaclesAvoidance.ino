@@ -5,12 +5,13 @@
  This code example is in the public domain. 
  http://www.botnroll.com
 
-Description:
-
+Description: 
+Read obstacle sensors and move the robot avoiding obstacles.
 */
+
 #include <BnrOneA.h>   // Bot'n Roll ONE A library
 #include <EEPROM.h>    // EEPROM reading and writing
-#include <SPI.h>      // SPI communication library required by BnrOne.cpp
+#include <SPI.h>       // SPI communication library required by BnrOne.cpp
 BnrOneA one;           // declaration of object variable to control the Bot'n Roll ONE A
 
 //constants definition
@@ -19,10 +20,15 @@ BnrOneA one;           // declaration of object variable to control the Bot'n Ro
 void setup() 
 { 
     //setup routines -> runs only once when program starts
+    delay(1500);			 // wait 1,5 second to stabilize sensors
     Serial.begin(57600);     // set baud rate to 57600bps for printing values at serial monitor. Press (ctrl+shift+m) after uploading    
     one.spiConnect(SSPIN);   // start the SPI communication module
     one.stop();              // stop motors
     one.obstacleEmitters(ON);// activate obstacles detection
+    one.lcd1("Avoid  Obstacles");
+    one.lcd2("Press a button!!");
+    while(one.readButton()==0)
+       delay(50);
 }
 
 void loop()

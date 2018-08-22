@@ -4,10 +4,23 @@
  This code example is in the public domain. 
  http://www.botnroll.com
 
-IMPORTANTE!!! Necessária calibração prévia dos sensores. _04_1_Calibrate.ino para a 
-leitura da linha devolver corretamente valores entre -100 e +100 da posição da linha.
- 
-Seguimento de linha :
+IMPORTANT!!!!
+Before you use this example you MUST calibrate the line sensor. Use example _04_1_Calibrate.ino first!!!
+Line reading provides a linear value between -100 to 100
+
+Line follow:
+Motors speed varies according to a linear function.
+Linear Gain must be adjusted.
+You can adjust the speed limit of the wheel that is outside the curve.
+Press push button 3 (PB3) to enter control configuration menu.
+
+<> 
+
+IMPORTANTE!!!! 
+Antes de usar este exemplo é necessário calibrar o sensor de linha. Usar exemplo _04_1_Calibrate.ino antes deste!!!
+Leitura da linha que devolve um valor linear entre -100 e +100 da posição da linha.
+
+Seguimento de linha:
 Os motores variam com a linha de acordo com uma função linear.
 Ajuste de ganho linear.
 Ajuste do limite de velocidade da roda que está no exterior da curva.
@@ -27,15 +40,16 @@ BnrOneA one;           // declaration of object variable to control the Bot'n Ro
 
 float batmin=10.5;  // safety voltage for discharging the battery
 int vel=60;          
-double kLine=1.10;   
-int vCurve=8;        
+double kLine=1.10;  //Linear gain <> Ganho linear
+int vCurve=8;       //Curve outside wheel max speed limit <> Limite de velocidade da roda exterior na curva
 
 void setup() 
 {  
   Serial.begin(57600);     // sets baud rate to 57600bps for printing values at serial monitor.
   one.spiConnect(SSPIN);   // starts the SPI communication module  
-  one.stop();              // stops all move
   one.minBat(batmin);      // safety voltage for discharging the battery
+  one.stop();              // stop motors
+  readLineEEPROM();		   // read control values from EEPROM <> Ler valores de controlo da EEPROM
   delay(1000);
 }
 
@@ -43,45 +57,46 @@ void loop()
 {
   int line=one.readLine();
 
-  int velM1=(int)((double)vel+((double)line*kLine));
-  int velM2=(int)((double)vel-((double)line*kLine));
+  int velM1=(int)((double)vel+((double)line*kLine)); //Linear function for Motor1 <> Função linear para o Motor1
+  int velM2=(int)((double)vel-((double)line*kLine)); //Linear function for Motor2 <> Função linear para o Motor2
 
-//Limitar mínimos e máximos da velocidade dos motores
+//Limit motors maximum and minimum speed <> Limitar mínimos e máximos da velocidade dos motores
   if(velM1<-1)
-      velM1=-1;
+      velM1=-1; //Minimum speed -1 causes motor to brake <> Velocidade mínima -1 faz o motor travar
   if(velM2<-1)
       velM2=-1;
   if(velM1>vel+vCurve)
-      velM1=vel+vCurve;
+      velM1=vel+vCurve; //Maximum speed limit <> Limite da velocidade máxima
   if(velM2>vel+vCurve)
       velM2=vel+vCurve;
 
 // Serial.print("   M1:"); Serial.print(velM1); Serial.print("   M2:"); Serial.println(velM2);  
   one.move(velM1,velM2);
   
-  //Menus de configuração
-  if(one.readButton()==3) menu();// Entra no menu
+  //Configuration menu <> Menu de configuração
+  if(one.readButton()==3) menu();//PB3 to enter menu <> PB3 para entrar no menu
 }
 
 
 void menu()
 {
     int var=0;
-    static int butt=3;
+    static int butt=0;
     float temp=0.0;
     one.stop();
     one.lcd1("  Menu Config:");
-    while(butt==3) //Espera que se largue o botão 3
+    one.lcd2("PB1+ PB2- PB3ok");  
+    delay(150);
+    while(one.readButton()==3) //Wait PB3 to be released <> Espera que se largue o botão 3
     {
-      butt=one.readButton();
-      delay(50);
+      delay(150);
     }
     
-    //*************** Velociade Maxima ***************
+    //***** Maximum speed <> Velocidade Maxima ******
     var=vel;
     while(butt!=3)
     {
-        one.lcd2("    VelMax:",var);
+        one.lcd2("   VelMax:",var);
         butt=one.readButton();
         if(butt==1)
         {
@@ -94,15 +109,15 @@ void menu()
           delay(150);
         }
     }
-    while(butt==3) //Espera que se largue o botão 3
+    while(butt==3) //Wait PB3 to be released <> Espera que se largue o botão 3
     {butt=one.readButton();}
     vel=var;        
 
-    //*************** Incremento da roda que acelera ***************
+    //**** Outside wheel speed boost <> Incremento de velocidade da roda de fora ****
     var=vCurve;
     while(butt!=3)
     {
-        one.lcd2("Curve Boost:",var);
+        one.lcd2("  Curve Boost:",var);
         butt=one.readButton();
         if(butt==1)
         {
@@ -115,11 +130,11 @@ void menu()
           delay(150);
         }
     }
-    while(butt==3) //Espera que se largue o botão 3
+    while(butt==3) //Wait PB3 to be released <> Espera que se largue o botão 3
     {butt=one.readButton();}
     vCurve=var;  
 
-     //*************** Ganho KLine ***************
+     //**** Linear gain KLine <> Ganho linear KLine ****
     temp=kLine*1000.0;
     var=(int)temp;
     while(butt!=3)
@@ -137,13 +152,56 @@ void menu()
           delay(150);
         }
     }
-    while(butt==3) //Espera que se largue o botão 3
+    while(butt==3) //Wait PB3 to be released <> Espera que se largue o botão 3
     {butt=one.readButton();}
     kLine=(float)var/1000.0;  
     
     
-    //*************** Termina Configuração *************** 
+    //**** Configuration end <> Termina Configuração *****
+	writeLineEEPROM(); // Write control values to EEPROM <> Escrever valores de controlo na EEPROM
     one.lcd1("Line  Following!");
     one.lcd2("www.botnroll.com");
     delay(250);
 }
+
+//Write values on EEPROM <> Escrever valores na EEPROM
+void writeLineEEPROM()
+{
+    byte eepromADD=10;
+    int var=0;
+
+    var=vel;
+    EEPROM.write(eepromADD,lowByte(var)); //Guardar em EEPROM
+    eepromADD++;
+    var=vCurve;
+    EEPROM.write(eepromADD,lowByte(var)); //Guardar em EEPROM
+    eepromADD++;
+    var=(int)(kLine*1000.0);
+    EEPROM.write(eepromADD,highByte(var)); //Guardar em EEPROM
+    eepromADD++;
+    EEPROM.write(eepromADD,lowByte(var));
+    eepromADD++;
+}
+
+//Read values from EEPROM <> Ler valores da EEPROM
+void readLineEEPROM()
+{
+    byte eepromADD=10;
+    int  var=0;
+      
+    vel=(int)EEPROM.read(eepromADD);
+    eepromADD++;
+    vCurve=(int)EEPROM.read(eepromADD);
+    eepromADD++;
+    var=0;
+    var=(int)EEPROM.read(eepromADD);
+    eepromADD++;
+    var=var<<8;
+    var+=(int)EEPROM.read(eepromADD);
+    eepromADD++;
+    kLine=(double)var/1000.0;
+    if(vel==255) vel=60;
+    if(vCurve==255) vCurve=3;
+    if(kLine<0) kLine=1.3;
+}
+

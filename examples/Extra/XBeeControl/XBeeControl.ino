@@ -9,8 +9,8 @@
  http://www.botnroll.com
 
  Description:
- This program allows a complete diagnosis of the whole Bot'n Roll ONE A hardware
- This program must be uploaded to the robot when using the Windows APP to control Bot'n Roll ONE A using XBee.
+ This program allows a complete diagnosis of the Bot'n Roll ONE A hardware
+ This program must be uploaded to the robot when using the Windows APP to control Bot'n Roll ONE A using XBee or USB cable
 */
 
 #include <BnrOneA.h>   // Bot'n Roll ONE A library
@@ -26,14 +26,14 @@ Servo gripper2;
 //constants definition
 #define SSPIN  2       // Slave Select (SS) pin for SPI communication
 
-#define ADDRESS 0x60                                          // Defines address of CMPS10
+#define ADDRESS 0x60   // Defines address of CMPS11
 
-#define echoPin 6 // Echo Pin
-#define trigPin 7 // Trigger Pin
-#define maximumRange 200   // Maximum range needed (200cm)
-#define minimumRange   0   // Minimum range needed
+#define echoPin 6         // Echo Pin
+#define trigPin 7         // Trigger Pin
+#define maximumRange 200  // Maximum range needed (200cm)
+#define minimumRange   0  // Minimum range needed
 
-#define CONTROL        5      // Tempo de delays
+#define CONTROL        5  // Delay Time
 
 struct TRAMA
 {
@@ -47,11 +47,11 @@ float read_bearing()
 {
 byte highByte, lowByte;    // highByte and lowByte store the bearing and fine stores decimal place of bearing
 
-   Wire.beginTransmission(ADDRESS);           //starts communication with CMPS10
+   Wire.beginTransmission(ADDRESS);           //starts communication with CMPS11
    Wire.write(2);                             //Sends the register we wish to start reading from
    Wire.endTransmission();
 
-   Wire.requestFrom(ADDRESS, 2);              // Request 4 bytes from CMPS10
+   Wire.requestFrom(ADDRESS, 2);              // Request 4 bytes from CMPS11
    while(Wire.available() < 2);               // Wait for bytes to become available
    highByte = Wire.read();
    lowByte = Wire.read();
@@ -61,13 +61,13 @@ return (float)((highByte<<8)+lowByte)/10;
 
 char read_roll()
 {
-char roll;                 // Stores  roll values of CMPS10, chars are used because they support signed value
+char roll;                 // Stores  roll values of CMPS11, chars are used because they support signed value
 
-   Wire.beginTransmission(ADDRESS);           //starts communication with CMPS10
+   Wire.beginTransmission(ADDRESS);           //starts communication with CMPS11
    Wire.write(5);                             //Sends the register we wish to start reading from
    Wire.endTransmission();
 
-   Wire.requestFrom(ADDRESS, 1);              // Request 4 bytes from CMPS10
+   Wire.requestFrom(ADDRESS, 1);              // Request 4 bytes from CMPS11
    while(Wire.available() < 1);               // Wait for bytes to become available
    roll =Wire.read();
 return roll;
@@ -75,13 +75,13 @@ return roll;
 
 char read_pitch()
 {
-char pitch;                // Stores pitch values of CMPS10, chars are used because they support signed value
+char pitch;                // Stores pitch values of CMPS11, chars are used because they support signed value
 
-   Wire.beginTransmission(ADDRESS);           //starts communication with CMPS10
+   Wire.beginTransmission(ADDRESS);           //starts communication with CMPS11
    Wire.write(4);                             //Sends the register we wish to start reading from
    Wire.endTransmission();
 
-   Wire.requestFrom(ADDRESS, 1);              // Request 4 bytes from CMPS10
+   Wire.requestFrom(ADDRESS, 1);              // Request 4 bytes from CMPS11
    while(Wire.available() < 1);               // Wait for bytes to become available
    pitch = Wire.read();
 
@@ -115,17 +115,17 @@ void setup()
     one.spiConnect(SSPIN);   // starts the SPI communication module
     one.stop();              // stops motors
 
-    Wire.begin();                                               // Conects I2C
+    Wire.begin();            // Start I2C BUS
 
     pinMode(trigPin, OUTPUT);
     pinMode(echoPin, INPUT);
 
-    gripper1.attach(3);    // Do I need this ?
-    gripper2.attach(5);    // Do I need this ?
+    gripper1.attach(3);
+    gripper2.attach(5);
     
     one.lcd1("Bot'n Roll ONE A");
 
-    delay(1000);             // waits 1 second
+    delay(1000);     // wait 1 second
 }
 
 void loop()
@@ -170,10 +170,10 @@ float battery;
                               str[16]=0;
                               one.lcd2(str);
                                   break;
-        case COMMAND_IR_EMITTERS:  //  0xF8 // IR Emmiters ON/OFF
+        case COMMAND_IR_EMITTERS:  //  0xF8 // IR Emitters ON/OFF
                               one.obstacleEmitters(trama.data[0]);
                                   break;
-        case COMMAND_STOP:         //  0xF7 // Stop motors freeley
+        case COMMAND_STOP:         //  0xF7 // Stop motors freely
                               one.stop();
                                   break;
         case COMMAND_MOVE:         //  0xF6 // Move motors with no PID control
@@ -303,7 +303,7 @@ float battery;
                                 
                                   digitalWrite(trigPin, LOW);
                                   duration = pulseIn(echoPin, HIGH, 11640);
-                                  delayMicroseconds(16000 - (micros()-tempo));  // esta rotina demora sempre o mesmo tempo (maximo 16 milisegundos)
+                                  delayMicroseconds(16000 - (micros()-tempo));  // this routine has fixed time (16 milliseconds)
                                 
                                   //Calculate the distance (in cm) based on the speed of sound
                                   distance = (int)(duration/58.2);

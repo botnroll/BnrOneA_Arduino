@@ -16,15 +16,15 @@
 #include <SPI.h>       // SPI communication library required by BnrOne.cpp
 #include <Wire.h>
 
-BnrOneA one;           // declaration of object variable to control the Bot'n Roll ONE A
+BnrOneA one;    // declaration of object variable to control the Bot'n Roll ONE A
 
 //constants definition
 #define SSPIN  2       // Slave Select (SS) pin for SPI communication
-#define ADDRESS 0x60                                          // Defines address of CMPS10
+#define ADDRESS 0x60   // CMPS11 I2C address
 
 void setup()
 {
-  Wire.begin();                                               // Conects I2C
+  Wire.begin();            // start I2C BUS
   Serial.begin(57600);
   one.spiConnect(SSPIN);   // start SPI communication module
   one.stop();              // stop motors
@@ -32,14 +32,14 @@ void setup()
 
 float read_bearing()
 {
-byte highByte, lowByte;    // highByte and lowByte store the bearing and fine stores decimal place of bearing
+byte highByte, lowByte;  // highByte and lowByte store the bearing and fine stores decimal place of bearing
 
-   Wire.beginTransmission(ADDRESS);           //start communication with CMPS10
-   Wire.write(2);                             //Send the register we wish to start reading from
+   Wire.beginTransmission(ADDRESS);    //start communication with CMPS11
+   Wire.write(2);                      //Send the register we wish to start reading from
    Wire.endTransmission();
 
-   Wire.requestFrom(ADDRESS, 2);              // Request 4 bytes from CMPS10
-   while(Wire.available() < 2);               // Wait for bytes to become available
+   Wire.requestFrom(ADDRESS, 2);       // Request 4 bytes from CMPS11
+   while(Wire.available() < 2);        // Wait for bytes to become available
    highByte = Wire.read();
    lowByte = Wire.read();
    
@@ -48,28 +48,28 @@ return (float)((highByte<<8)+lowByte)/10;
 
 char read_roll()
 {
-char roll;                 // Store  roll values of CMPS10, chars are used because they support signed value
+char roll;       // Store  roll values of CMPS11, chars are used because they support signed value
 
-   Wire.beginTransmission(ADDRESS);           //start communication with CMPS10
-   Wire.write(5);                             //Send the register we wish to start reading from
+   Wire.beginTransmission(ADDRESS);     //start communication with CMPS11
+   Wire.write(5);                       //Send the register we wish to start reading from
    Wire.endTransmission();
 
-   Wire.requestFrom(ADDRESS, 1);              // Request 4 bytes from CMPS10
-   while(Wire.available() < 1);               // Wait for bytes to become available
+   Wire.requestFrom(ADDRESS, 1);        // Request 4 bytes from CMPS11
+   while(Wire.available() < 1);         // Wait for bytes to become available
    roll =Wire.read();
 return roll;
 }
 
 char read_pitch()
 {
-char pitch;                // Store pitch values of CMPS10, chars are used because they support signed value
+char pitch;       // Store pitch values of CMPS11, chars are used because they support signed value
 
-   Wire.beginTransmission(ADDRESS);           //start communication with CMPS10
-   Wire.write(4);                             //Send the register we wish to start reading from
+   Wire.beginTransmission(ADDRESS);     //start communication with CMPS11
+   Wire.write(4);                       //Send the register we wish to start reading from
    Wire.endTransmission();
 
-   Wire.requestFrom(ADDRESS, 1);              // Request 4 bytes from CMPS10
-   while(Wire.available() < 1);               // Wait for bytes to become available
+   Wire.requestFrom(ADDRESS, 1);        // Request 4 bytes from CMPS11
+   while(Wire.available() < 1);         // Wait for bytes to become available
    pitch = Wire.read();
 
 return pitch;
